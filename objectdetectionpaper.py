@@ -106,11 +106,12 @@ def return_objects(img):
     # total.extend(surmark_950410)
     # total.extend(other)
     # # total.extend(other1)
-    return total.strip(" ")
+    return total.strip("\t")
 
 
 if __name__ == '__main__':
     image = imread('vrx_objs.png')
-    print(return_objects(image))
+    # return_objects回傳資料用\t隔開的字串
+    print(return_objects(image).split("\t"))
     imshow('image', image)
     waitKey(0)
