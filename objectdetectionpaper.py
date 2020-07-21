@@ -56,7 +56,6 @@ def find_contour(binary, img, color):
 
 
 def get_color(img, lower_range, upper_range, color):
-
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     # imshow('image', img)
     # waitKey(0)
@@ -82,6 +81,7 @@ def object_detection(diff, img, color):
     return find_contour(binary, img, color)
 
 
+# output: 'obj_name:(x,y)'
 def return_objects(img):
     # redImg = object_detection(redImage(img), img)
     # greenImg = object_detection(greenImage(img), img)
@@ -109,6 +109,7 @@ def return_objects(img):
     return total.strip("\t")
 
 
+# 範例
 if __name__ == '__main__':
     image = imread('vrx_objs.png')
     # return_objects回傳資料用\t隔開的字串
