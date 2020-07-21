@@ -26,7 +26,7 @@ previous_contours = []
 def find_contour(binary, img, color):
     cont = imutils.grab_contours(findContours(binary, RETR_TREE, CHAIN_APPROX_SIMPLE))
     cont_used = []
-    pos = []
+    pos = ""
     sd = ShapeDetector()
     for a in range(1, len(cont)):
         c = cont[a]
@@ -45,13 +45,13 @@ def find_contour(binary, img, color):
         else:
             previous_contours.append([cX, cY])
             cont_used.append(c)
-        if color == 'black totem' and shape != 'rectangle':
-            color = 'light bouy'
+        if color == 'black_totem' and shape != 'rectangle':
+            color = 'light_bouy'
         b, g, r = img[cY, cX]
         drawContours(img, [c], -1, (0, 255, 0), 2)
         putText(img, color, (cX - 20, cY - 20),
                 FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
-        pos.append([color, [cX, cY]])
+        pos += color + ":" + "(" + str(cX) + "," + str(cY) + ")" + "\t"
     return pos
 
 
@@ -85,28 +85,28 @@ def object_detection(diff, img, color):
 def return_objects(img):
     # redImg = object_detection(redImage(img), img)
     # greenImg = object_detection(greenImage(img), img)
-    black = get_color(img, (0, 0, 0), (3, 3, 50), 'black totem')
-    red = get_color(img, (0, 200, 50), (3, 255, 255), 'red totem')
-    yellow = get_color(img, (25, 200, 50), (35, 255, 255), 'yellow totem')
-    green = get_color(img, (55, 200, 50), (65, 255, 255), 'green totem')
-    blue = get_color(img, (115, 200, 50), (125, 255, 255), 'blue totem')
+    black = get_color(img, (0, 0, 0), (3, 3, 50), 'black_totem')
+    red = get_color(img, (0, 200, 50), (3, 255, 255), 'red_totem')
+    yellow = get_color(img, (25, 200, 50), (35, 255, 255), 'yellow_totem')
+    green = get_color(img, (55, 200, 50), (65, 255, 255), 'green_totem')
+    blue = get_color(img, (115, 200, 50), (125, 255, 255), 'blue_totem')
     # white = get_color(img, (0, 0, 40), (3, 3, 50), 'white')
     surmark_950400 = get_color(img, (74, 75, 50), (82, 108, 255), 'surmark_950400')
     surmark_950410 = get_color(img, (0, 100, 50), (4, 160, 255), 'surmark_950410')
     other = object_detection(redImage(img), img, 'surmark_46104')
-    other1 = object_detection(greenImage(img), img, 'surmark_46104')
+    # other1 = object_detection(greenImage(img), img, 'surmark_46104')
 
-    total = black
-    total.extend(red)
-    total.extend(yellow)
-    total.extend(green)
-    total.extend(blue)
-    # total.extend(white)
-    total.extend(surmark_950400)
-    total.extend(surmark_950410)
-    total.extend(other)
-    total.extend(other1)
-    return total
+    total = black + red + yellow + green + blue + surmark_950400 + surmark_950410 + other
+    # total.extend(red)
+    # total.extend(yellow)
+    # total.extend(green)
+    # total.extend(blue)
+    # # total.extend(white)
+    # total.extend(surmark_950400)
+    # total.extend(surmark_950410)
+    # total.extend(other)
+    # # total.extend(other1)
+    return total.strip(" ")
 
 
 if __name__ == '__main__':
