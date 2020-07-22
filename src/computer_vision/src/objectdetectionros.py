@@ -1,7 +1,16 @@
-from pyimagesearch.shapedetector import ShapeDetector
+from shapedetector import ShapeDetector
 import imutils
 from cv2 import *
 import numpy as np
+
+import rospy
+from std_msgs.msg import Int32MultiArray, Float64, String
+from sensor_msgs.msg import Image
+from cv_bridge import CvBridge, CvBridgeError
+
+from time import sleep
+
+bridge = CvBridge()
 
 contour_dist_max = 2500
 contour_color = (0, 255, 0)
@@ -11,9 +20,11 @@ struct_ele = (5, 5)
 
 
 class ObjectDetection:
-    def __init__(self, img):
-        self.__img = img
+    def __init__(self):
+        self.on_startup()
+        self.__img = []
         self.__previous_contours = []
+        self.middle_cam_sub = rospy.Subscriber("/wamv/sensors/cameras/front_left_camera/image_raw", Image, self.middle_callBack, queue_size=1)
 
     # get gray image which uses green value as luminosity
     def greenImage(self):
@@ -65,14 +76,14 @@ class ObjectDetection:
 
     # use a specific range of colors as mask and transfer image to binary image
     def get_color(self, lower_range, upper_range, color):
-        hsv = cv2.cvtColor(self.__img, cv2.COLOR_BGR2HSV)
+        hsv = cvtColor(self.__img, COLOR_BGR2HSV)
         # imshow('image', self)
         # waitKey(0)
 
         lower_range = np.array([lower_range])
         upper_range = np.array([upper_range])
 
-        mask = cv2.inRange(hsv, lower_range, upper_range)
+        mask = inRange(hsv, lower_range, upper_range)
         kernel = np.ones(struct_ele, np.uint8)
         opening = morphologyEx(mask, MORPH_OPEN, kernel)
         not_opening = bitwise_not(opening)
@@ -106,14 +117,37 @@ class ObjectDetection:
         # other1 = object_detection(greenImage(self), self, 'surmark_46104')
 
         total = black + red + yellow + green + blue + surmark_950400 + surmark_950410 + surmark_46104
-        return total.strip("\t")
+        if pub_message_sum != "":
+            img_item_pub = rospy.Publisher("ntu/img_item_pub", String, queue_size=10)
+            img_item_pub.publish(total.strip("\t"))
 
+    def on_startup(self):
+        global contour_dist_max
+        global text_color
+        global contour_color
+        global blur_radius
+        global struct_ele
+        if rospy.has_param('~contour_dist_max'):
+            contour_dist_max = rospy.get_param('~contour_dist_max')
+        if rospy.has_param('~contour_color'):
+            contour_color = rospy.get_param('~contour_color')
+        if rospy.has_param('~text_color'):
+            text_color = rospy.get_param('~text_color')
+        if rospy.has_param('~blur_radius'):
+            blur_radius = rospy.get_param('~blur_radius')
+        if rospy.has_param('~struct_ele'):
+            struct_ele = rospy.get_param('~struct_ele')
 
-# 範例
-if __name__ == '__main__':
-    image = imread('vrx_objs.png')
-    # return_objects回傳資料用\t隔開的字串
-    od = ObjectDetection(image)
-    print(od.return_objects().split("\t"))
-    imshow('image', image)
-    waitKey(0)
+    def middle_callBack(self, data):
+        try:
+            img = bridge.imgmsg_to_cv2(data, "bgr8")
+            print(img)
+        except CvBridgeError as e:
+            print(e)
+            print("CvBridge error")
+
+        self.__img = img
+        self.return_objects()
+ 
+    def onShutdown(self):
+        rospy.loginfo("CV Shutdown.")

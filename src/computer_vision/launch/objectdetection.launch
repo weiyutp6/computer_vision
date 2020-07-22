@@ -1,0 +1,10 @@
+<launch>
+    <!-- Setup file -->
+    <arg name="param_file" default="objectdetection"/>
+
+    <!-- Node --> 
+    <node name="objectdetectionmain" pkg="computer_vision" type="objectdetectionmain.py" output="screen" clear_params="true" required="true">
+        <rosparam command="load" file="$(find computer_vision)/config/$(arg param_file).yaml" />
+    </node>
+
+</launch>
