@@ -5,11 +5,11 @@ import numpy as np
 
 
 class ObjectDetection:
-    # get gray image which uses green value as luminosity
     def __init__(self, img):
         self.__img = img
         self.__previous_contours = []
 
+    # get gray image which uses green value as luminosity
     def greenImage(self):
         return split(self.__img)[1]
 
