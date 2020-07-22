@@ -1,0 +1,5 @@
+contour_dist_max : 2500
+contour_color : (0, 255, 0)
+text_color : (255, 255, 255)
+blur_radius : 25
+struct_ele : (5, 5)

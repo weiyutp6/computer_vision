@@ -3,6 +3,12 @@ import imutils
 from cv2 import *
 import numpy as np
 
+contour_dist_max = 2500
+contour_color = (0, 255, 0)
+text_color = (255, 255, 255)
+blur_radius = 25
+struct_ele = (5, 5)
+
 
 class ObjectDetection:
     def __init__(self, img):
@@ -41,7 +47,7 @@ class ObjectDetection:
             isSame = False
             for contour in self.__previous_contours:
                 contour_dist = (contour[0] - cX) ** 2 + (contour[1] - cY) ** 2
-                if contour_dist < 2500:
+                if contour_dist < contour_dist_max:
                     isSame = True
             if isSame:
                 continue
@@ -51,9 +57,9 @@ class ObjectDetection:
             if color == 'black_totem' and shape != 'rectangle':
                 color = 'light_bouy'
             b, g, r = self.__img[cY, cX]
-            drawContours(self.__img, [c], -1, (0, 255, 0), 2)
+            drawContours(self.__img, [c], -1, contour_color, 2)
             putText(self.__img, color, (cX - 20, cY - 20),
-                    FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2)
+                    FONT_HERSHEY_SIMPLEX, 0.5, text_color, 2)
             pos += color + ":" + "(" + str(cX) + "," + str(cY) + ")" + "\t"
         return pos
 
@@ -67,7 +73,7 @@ class ObjectDetection:
         upper_range = np.array([upper_range])
 
         mask = cv2.inRange(hsv, lower_range, upper_range)
-        kernel = np.ones((5, 5), np.uint8)
+        kernel = np.ones(struct_ele, np.uint8)
         opening = morphologyEx(mask, MORPH_OPEN, kernel)
         not_opening = bitwise_not(opening)
         # imshow('image', not_opening)
@@ -77,7 +83,7 @@ class ObjectDetection:
     # find binary image from subtracting a single color value gray image and y value then threshold using otsu algorithm
     def object_detection(self, diff, color):
         difference = diff - self.YUY2()
-        filtered = medianBlur(difference, 25)
+        filtered = medianBlur(difference, blur_radius)
         binary = threshold(filtered, 200, 255, THRESH_OTSU)[1]
         # imshow('image', binary)
         # waitKey(0)
