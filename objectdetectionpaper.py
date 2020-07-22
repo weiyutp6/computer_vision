@@ -1,4 +1,4 @@
-from pyimagesearch.shapedetector import ShapeDetector
+from shapedetector import ShapeDetector
 import imutils
 from cv2 import *
 import time
