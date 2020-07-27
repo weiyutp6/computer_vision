@@ -110,10 +110,10 @@ class ObjectDetection:
         yellow = self.get_color((25, 200, 50), (35, 255, 255), 'yellow_totem')
         green = self.get_color((55, 200, 50), (65, 255, 255), 'green_totem')
         blue = self.get_color((115, 200, 50), (125, 255, 255), 'blue_totem')
-        # white = get_color(self, (0, 0, 40), (3, 3, 50), 'white')
+        surmark_46104 = self.get_color(self, (0, 0, 40), (3, 3, 50), 'surmark_46104')
         surmark_950400 = self.get_color((74, 75, 50), (82, 108, 255), 'surmark_950400')
         surmark_950410 = self.get_color((0, 100, 50), (4, 160, 255), 'surmark_950410')
-        surmark_46104 = self.object_detection(self.redImage(), 'surmark_46104')
+        # surmark_46104 = self.object_detection(self.redImage(), 'surmark_46104')
         # other1 = object_detection(greenImage(self), self, 'surmark_46104')
 
         total = black + red + yellow + green + blue + surmark_950400 + surmark_950410 + surmark_46104
